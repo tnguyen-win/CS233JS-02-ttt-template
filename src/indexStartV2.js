@@ -1,40 +1,83 @@
-// Create a class called TTT
-{
-    /*
-        Add a constructor that 
-        -   defines and initializes all variables
-        -   binds the keyword this to the class for each function because
-            this will otherwise will refer to the clicked square
-            -   this.calculateWinner = this.calculateWinner.bind(this);
-            -   DON'T bind this for handleClick at this point
-        -   calls the init method
-    */
+/* jshint esversion: 6 */
 
-    /*
-        Convert each function to a method
-        -   move it inside the class
-        -   remove the keyword function
-        -   add this to all of the variables that belong to the class
-        -   change var to let or const for local variables
-        -   add this to all method calls
-     
-        Init
-        -   bind both this and i to handleClick
-            -   this.handleClick.bind(this, i);
+class TTT {
+	constructor() {
+		this.xIsNext = true;
+		this.squares = Array(9).fill(null);
+		this.winner = null;
+		this.winningLine = Array();
+		this.lines = [
+			[0, 1, 2],
+			[3, 4, 5],
+			[6, 7, 8],
+			[0, 3, 6],
+			[1, 4, 7],
+			[2, 5, 8],
+			[0, 4, 8],
+			[2, 4, 6],
+		];
 
-        CalculateWinner
-        -   use destructuring assingment to assign values to
-            a b and c in one line
+		this.calculateWinner = this.calculateWinner.bind(this);
 
-        HandleClick
-        -   add a parameter i rather than getting i from this
-            -   this now refers to the class not the square
-        -   remove the local variable i
-        -   add a local variable to refer to the clicked square
-            -   remember that squares have an integer id 0 - 8
-    */
+		this.init();
+	}
+
+	init() {
+		const uiSquares = document.getElementsByName("square");
+
+		for (let u of uiSquares) u.onclick = this.handleClick.bind(this, u.id);
+	}
+
+	handleClick(index) {
+		let player = this.xIsNext ? "X" : "O";
+		let e = document.getElementById(index);
+
+		this.xIsNext = !this.xIsNext;
+
+		this.squares[index] = player;
+
+		e.innerText = player;
+		e.onclick = () => { };
+
+		if (this.calculateWinner()) {
+			this.highlightWinner();
+			this.disableAll();
+		} else document.getElementById("status").innerText = `Next Player: ${player = this.xIsNext ? "X" : "O"}`;
+	}
+
+	calculateWinner() {
+		for (let l of this.lines) {
+			const [a, b, c] = l;
+
+			if (this.squares[a] && this.squares[a] === this.squares[b] && this.squares[a] === this.squares[c]) {
+				this.winner = this.squares[a];
+
+				this.winningLine = l;
+
+				return true;
+			}
+		}
+
+		this.winner = null;
+
+		this.winningLine = Array();
+
+		return false;
+	}
+
+	highlightWinner() {
+		document.getElementById("status").innerText = `Winner: ${this.winner}`;
+
+		for (let l of this.winningLine) document.getElementById(l).classList.add("red");
+	}
+
+	disableAll() {
+		const squares = document.getElementsByName("square");
+
+		for (let s of squares) s.onclick = () => { };
+	}
 }
 
-// declare a variable ttt
+var ttt;
 
-// add an onload handler to the window that assigns ttt to a TTT
+window.onload = () => { ttt = new TTT(); };

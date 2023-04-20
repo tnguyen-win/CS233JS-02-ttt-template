@@ -1,7 +1,17 @@
+html,
+body {
+	font-family: "Comic Sans MS", "Comic Sans", cursive;
+	background-color: black;
+}
+
+.text-bg-dark {
+	background-color: black !important;
+}
+
 .square {
-  border: 2px solid black;
-}  
+	user-select: none;
+}
 
 .red {
-  color:red;
+	color: red;
 }
